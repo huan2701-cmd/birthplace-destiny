@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Does Where You Are Born Determine Your Future?</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,sans-serif;color:#222;background:#fff;line-height:1.7;-webkit-font-smoothing:antialiased;font-size:17px}
+.container{max-width:1100px;margin:0 auto;padding:0 2rem}
+.section-title{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(2.4rem,5vw,3.2rem);color:#1D3557;margin-bottom:.75rem;line-height:1.2}
+.subtitle{color:#555;font-size:1.1rem;margin-bottom:1.5rem}
+.narrative{font-size:1.2rem;line-height:1.85;color:#333;margin:1.5rem 0;max-width:780px}
+.finding-label{font-size:.9rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#457B9D;margin-bottom:.8rem}
+.part-label{font-size:.95rem;letter-spacing:4px;text-transform:uppercase;color:#666;margin-bottom:.5rem;text-align:center}
+.instructions{font-size:.95rem;color:#666;background:#f5f5f5;border-radius:6px;padding:8px 14px;display:inline-block;margin-top:.5rem}
+.data-source{font-size:.95rem;color:#666;margin-top:.5rem}
+.tooltip{position:absolute;background:#fff;border:1px solid #ddd;border-radius:8px;padding:12px 16px;font-size:15px;font-family:'Inter',sans-serif;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.12);opacity:0;transition:opacity .15s;z-index:100;max-width:300px;line-height:1.6}
+.tooltip strong{font-weight:700}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:1rem;font-size:15px}
+.legend-item{display:flex;align-items:center;gap:6px;cursor:pointer;padding:3px 8px;border-radius:4px;transition:background .2s;color:#333}
+.legend-item:hover{background:#f0f0f0}
+.legend-dot{width:13px;height:13px;border-radius:50%;flex-shrink:0}
+section.viz{margin-bottom:4rem}
+svg text{font-family:'Inter',-apple-system,sans-serif}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section style="min-height:85vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:2rem">
+<div>
+  <p class="part-label">CSCI 5609 — Final Project</p>
+  <h1 class="section-title" style="font-size:clamp(2.2rem,5.5vw,3.8rem);max-width:800px;margin:0 auto">Does Where You Are Born<br>Determine Your Future?</h1>
+  <p style="color:#555;font-size:1.2rem;margin-top:1.5rem;max-width:580px;margin-left:auto;margin-right:auto">From American zip codes to global policy — a data-driven story about inequality, mobility, and the choices that shape lives.</p>
+  <p style="margin-top:3rem;font-size:15px;color:#666;letter-spacing:2px;text-transform:uppercase">Scroll to begin ↓</p>
+  <p style="margin-top:1.5rem;font-size:1rem;color:#555;font-weight:500">Brandon Borzello · Harris Li · Qi Wu · Yiqi Huang</p>
+</div>
+</section>
+
+<!-- PART I HEADER -->
+<div class="container" style="padding:3rem 0;text-align:center">
+  <p class="part-label">Part I</p>
+  <h2 class="section-title" style="text-align:center">The American Story</h2>
+  <p class="subtitle" style="text-align:center;max-width:650px;margin:.5rem auto">The Opportunity Atlas tracked 20 million Americans born 1978–1992 to reveal how geography shapes economic destiny.</p>
+  <p class="data-source" style="text-align:center">Data: Raj Chetty et al., Harvard Opportunity Insights</p>
+</div>
+
+<!-- VIZ 1: MAP -->
+<section class="viz container">
+  <p class="finding-label">Finding 1</p>
+  <h2 class="section-title">The Geography of Opportunity</h2>
+  <p class="subtitle">Expected income rank for children from the poorest families, by county (1978 cohort)</p>
+  <div id="chart-map"></div>
+  <div id="map-legend" style="margin-top:.5rem"></div>
+  <p class="instructions">Hover over any county. Scroll to zoom. Drag to pan.</p>
+  <p class="narrative">For children born into the poorest families, geography is destiny. In parts of the Upper Midwest, a child from the bottom reaches the 55th percentile by their mid-30s. In the Deep South, they barely reach the 35th. Same country, same era, vastly different outcomes.</p>
+</section>
+
+<!-- VIZ 2: SCATTER -->
+<section class="viz container">
+  <p class="finding-label">Finding 2</p>
+  <h2 class="section-title">Rich Kids vs Poor Kids</h2>
+  <p class="subtitle">Outcome percentile for children from the poorest (x) vs richest (y) families, by county</p>
+  <div id="chart-scatter"></div>
+  <p class="instructions">Hover over any county to see the gap between rich and poor children.</p>
+  <p class="narrative">Every dot above the diagonal represents a county where children from wealthy families outperform those from poor families. Nearly every county in America is above that line. But the distance — the gap between rich and poor kids — varies enormously.</p>
+</section>
+
+<!-- VIZ 3: DIVERGING BAR -->
+<section class="viz container">
+  <p class="finding-label">Finding 3</p>
+  <h2 class="section-title">Which States Are Getting Better?</h2>
+  <p class="subtitle">Change in upward mobility between the 1978 and 1992 birth cohorts, by state</p>
+  <div id="chart-change"></div>
+  <p class="instructions">Hover over any state for details.</p>
+  <p class="narrative">The geography of opportunity is not static. Some states saw meaningful improvements in mobility between the 1978 and 1992 birth cohorts. Others saw the ladder get harder to climb.</p>
+</section>
+
+<!-- TRANSITION -->
+<div class="container" style="padding:5rem 0;text-align:center">
+  <p style="font-size:1.6rem;font-family:'Playfair Display',serif;color:#1D3557;max-width:600px;margin:0 auto;line-height:1.4">Within the United States, geography is destiny for poor families.<br><br>But zoom out — and the same pattern plays out between countries.</p>
+</div>
+
+<!-- PART II HEADER -->
+<div class="container" style="padding:3rem 0;text-align:center">
+  <p class="part-label">Part II</p>
+  <h2 class="section-title" style="text-align:center">The Global Story</h2>
+  <p class="subtitle" style="text-align:center;max-width:650px;margin:.5rem auto">Countries with nearly identical market inequality end up with vastly different outcomes — depending on whether they choose to redistribute.</p>
+  <p class="data-source" style="text-align:center">Data: SWIID (Solt 2020), World Inequality Database, Our World in Data</p>
+</div>
+
+<!-- VIZ 4: DUMBBELL -->
+<section class="viz container">
+  <p class="finding-label">Finding 4</p>
+  <h2 class="section-title">The Redistribution Gap</h2>
+  <p class="subtitle">Market Gini (○ before tax) vs Disposable Gini (● after tax). Source: SWIID v9.0</p>
+  <div id="legend4" class="legend"></div>
+  <div id="chart-dumbbell"></div>
+  <p class="instructions">Hover over any country. Click a region in the legend to filter.</p>
+  <p class="narrative">Before taxes, most developed countries look remarkably similar (Gini 43–50). After redistribution, the picture diverges. Nordic countries cut inequality nearly in half; the US barely budges.</p>
+</section>
+
+<!-- VIZ 5: STACKED BAR -->
+<section class="viz container">
+  <p class="finding-label">Finding 5</p>
+  <h2 class="section-title">Where Does the Money Go?</h2>
+  <p class="subtitle">If all national income were $100, how would it be divided? Source: World Inequality Database, ~2022</p>
+  <div id="legend5" class="legend"></div>
+  <div id="chart-income"></div>
+  <p class="instructions">Hover on any segment to compare that income group across all countries.</p>
+  <p class="narrative">In South Africa, the bottom half gets $8 out of every $100. In Norway, they get $26. The United States — the world's largest economy — gives its poorest half only $13.</p>
+</section>
+
+<!-- VIZ 6: LIFE SCATTER -->
+<section class="viz container">
+  <p class="finding-label">Finding 6</p>
+  <h2 class="section-title">What Inequality Costs</h2>
+  <p class="subtitle">Top 10% income share vs life expectancy. Sources: WID, Our World in Data, World Bank</p>
+  <div id="legend6" class="legend"></div>
+  <div id="chart-life"></div>
+  <p class="instructions">Hover to explore. Click legend to filter by region.</p>
+  <p class="narrative">As the top 10% takes more, life expectancy drops. The US is the starkest outlier — the richest large economy, but with life expectancy below Chile.</p>
+</section>
+
+<!-- CONCLUSION -->
+<section style="background:#1D3557;color:#fff;padding:5rem 2rem;text-align:center;margin-top:2rem">
+<div style="max-width:700px;margin:0 auto">
+  <p style="font-size:.9rem;letter-spacing:3px;text-transform:uppercase;opacity:.6;margin-bottom:1.5rem">The bottom line</p>
+  <h2 style="font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(1.8rem,4vw,2.6rem);line-height:1.3;margin-bottom:1.5rem">Inequality isn't destiny.<br>It's a policy choice.</h2>
+  <p style="font-size:1.15rem;line-height:1.8;opacity:.85;margin-bottom:2rem">Within the U.S., a child's county shapes their future more than almost any other factor. Across countries, similar levels of market inequality produce vastly different outcomes depending on whether governments choose to redistribute. The data shows that where you are born matters enormously — but it doesn't have to.</p>
+  <div style="border-top:1px solid rgba(255,255,255,.2);padding-top:1.5rem;font-size:.9rem;opacity:.6">
+    <p>Data: Opportunity Atlas (Chetty et al.), SWIID (Solt 2020), World Inequality Database, Our World in Data</p>
+    <p style="margin-top:.3rem">Built with D3.js · CSCI 5609, Spring 2026</p>
+  </div>
+</div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+<script>
+// ═══ SHARED ═══
+const RC={"Nordic":"#457B9D","Anglo":"#E63946","Continental":"#2A9D8F","Latin America":"#E9C46A","East Asia":"#6A4C93","Africa":"#F4845F"};
+const tip=d3.select("body").append("div").attr("class","tooltip");
+function showTip(ev,html){
+  tip.html(html).style("opacity",1);
+  let l=ev.pageX+15,t=ev.pageY-10;
+  const r=tip.node().getBoundingClientRect();
+  if(l+r.width>window.innerWidth-10)l=ev.pageX-r.width-15;
+  if(t<10)t=ev.pageY+15;
+  tip.style("left",Math.max(4,l)+"px").style("top",Math.max(4,t)+"px");
+}
+function hideTip(){tip.style("opacity",0)}
+function buildLeg(id,items,cb){
+  const el=d3.select("#"+id);
+  items.forEach(([name,color])=>{
+    const it=el.append("span").attr("class","legend-item").datum(name).on("click",(_,n)=>cb(n));
+    it.append("span").attr("class","legend-dot").style("background",color);
+    it.append("span").text(name);
+  });
+}
+
+// ═══ PART I: Load county data then render VIZ 1-3 ═══
+fetch("data/counties.json").then(r=>r.json()).then(data=>{
+  const counties=data.counties, states=data.states;
+
+  // ── VIZ 1: CHOROPLETH MAP ──
+  (async function(){
+    const us=await fetch("https://cdn.jsdelivr.net/npm/us-atlas@3/counties-10m.json").then(r=>r.json());
+    const countyGeo=topojson.feature(us,us.objects.counties);
+    const stateGeo=topojson.mesh(us,us.objects.states,(a,b)=>a!==b);
+    const lookup=new Map(counties.map(d=>[d.fips,d]));
+
+    const W=1100,H=700;
+    const el=d3.select("#chart-map");
+    const svg=el.append("svg").attr("viewBox",`0 0 ${W} ${H}`).attr("width","100%").style("background","#fff").style("min-height","500px");
+    const g=svg.append("g");
+    const proj=d3.geoAlbersUsa().fitSize([W,H],countyGeo);
+    const path=d3.geoPath(proj);
+
+    const colorScale=d3.scaleSequential(d3.interpolateRdYlGn).domain([25,60]);
+
+    g.selectAll("path.county").data(countyGeo.features).join("path").attr("class","county")
+      .attr("d",path)
+      .attr("fill",d=>{const c=lookup.get(d.id);return c?colorScale(c.p1):"#eee";})
+      .attr("stroke","#fff").attr("stroke-width",.2)
+      .on("mouseenter",function(ev,d){
+        d3.select(this).attr("stroke","#333").attr("stroke-width",1.5).raise();
+        const c=lookup.get(d.id);
+        if(c)showTip(ev,`<strong>${c.name}, ${c.state}</strong><br>Poor kids' outcome: <strong>${c.p1.toFixed(1)}</strong>th percentile<br>Rich kids' outcome: ${c.p100.toFixed(1)}th pctile<br>Change: ${c.ch>0?"+":""}${c.ch.toFixed(1)} pts`);
+      })
+      .on("mousemove",ev=>{tip.style("left",(ev.pageX+15)+"px").style("top",(ev.pageY-10)+"px")})
+      .on("mouseleave",function(){d3.select(this).attr("stroke","#fff").attr("stroke-width",.2);hideTip()});
+
+    g.append("path").datum(stateGeo).attr("d",path).attr("fill","none").attr("stroke","#fff").attr("stroke-width",.8);
+
+    // Zoom
+    const zoom=d3.zoom().scaleExtent([1,8]).on("zoom",ev=>g.attr("transform",ev.transform));
+    svg.call(zoom);
+
+    // Color legend
+    const lW=400,lH=16;
+    const lSvg=d3.select("#map-legend").append("svg").attr("width",lW+80).attr("height",44);
+    const defs=lSvg.append("defs");
+    const grad=defs.append("linearGradient").attr("id","cleg");
+    [0,.25,.5,.75,1].forEach(t=>{
+      grad.append("stop").attr("offset",t*100+"%").attr("stop-color",colorScale(25+t*35));
+    });
+    lSvg.append("rect").attr("x",40).attr("y",4).attr("width",lW).attr("height",lH).attr("rx",4).attr("fill","url(#cleg)");
+    lSvg.append("text").attr("x",40).attr("y",34).attr("font-size",13).attr("fill","#555").text("25 (low mobility)");
+    lSvg.append("text").attr("x",40+lW).attr("y",34).attr("text-anchor","end").attr("font-size",13).attr("fill","#555").text("60 (high mobility)");
+  })();
+
+  // ── VIZ 2: SCATTER (sample 600) ──
+  (function(){
+    const sample=counties.filter((_,i)=>i%Math.ceil(counties.length/600)===0);
+    const W=1060,H=620,m={top:24,right:24,bottom:60,left:64};
+    const iW=W-m.left-m.right,iH=H-m.top-m.bottom;
+    const svg=d3.select("#chart-scatter").append("svg").attr("viewBox",`0 0 ${W} ${H}`).attr("width","100%").style("min-height","480px");
+    const g=svg.append("g").attr("transform",`translate(${m.left},${m.top})`);
+    const x=d3.scaleLinear().domain([d3.min(sample,d=>d.p1)-3,d3.max(sample,d=>d.p1)+3]).range([0,iW]);
+    const y=d3.scaleLinear().domain([d3.min(sample,d=>d.p100)-3,d3.max(sample,d=>d.p100)+3]).range([iH,0]);
+
+    // Axes
+    g.append("line").attr("x1",0).attr("x2",iW).attr("y1",iH).attr("y2",iH).attr("stroke","#999");
+    g.append("line").attr("x1",0).attr("x2",0).attr("y1",0).attr("y2",iH).attr("stroke","#999");
+    g.append("text").attr("x",iW).attr("y",iH+42).attr("text-anchor","end").attr("font-size",13).attr("fill","#555").text("Poor kids' outcome (percentile) \u2192");
+    g.append("text").attr("x",-10).attr("y",-10).attr("font-size",13).attr("fill","#555").text("Rich kids' outcome \u2191");
+    const xTicks=d3.ticks(x.domain()[0],x.domain()[1],8);
+    xTicks.forEach(v=>g.append("text").attr("x",x(v)).attr("y",iH+18).attr("text-anchor","middle").attr("font-size",13).attr("fill","#555").text(v.toFixed(0)));
+    const yTicks=d3.ticks(y.domain()[0],y.domain()[1],8);
+    yTicks.forEach(v=>g.append("text").attr("x",-10).attr("y",y(v)).attr("text-anchor","end").attr("dominant-baseline","middle").attr("font-size",13).attr("fill","#555").text(v.toFixed(0)));
+
+    // Diagonal
+    const lo=Math.max(x.domain()[0],y.domain()[0]),hi=Math.min(x.domain()[1],y.domain()[1]);
+    g.append("line").attr("x1",x(lo)).attr("y1",y(lo)).attr("x2",x(hi)).attr("y2",y(hi)).attr("stroke","#bbb").attr("stroke-dasharray","8,5").attr("stroke-width",2);
+    g.append("text").attr("x",x(hi)+4).attr("y",y(hi)-4).attr("font-size",13).attr("fill","#666").attr("font-weight",500).text("Equal outcomes line");
+
+    // Color by gap: orange = big gap (unequal), teal = small gap (more equal)
+    const gapExt=d3.extent(sample,d=>d.p100-d.p1);
+    const gapColor=d3.scaleLinear()
+      .domain([gapExt[0], (gapExt[0]+gapExt[1])/2, gapExt[1]])
+      .range(["#2A9D8F","#E9C46A","#E63946"]);
+
+    const dots=g.selectAll("circle").data(sample).join("circle")
+      .attr("cx",d=>x(d.p1)).attr("cy",d=>y(d.p100)).attr("r",5)
+      .attr("fill",d=>gapColor(d.p100-d.p1)).attr("opacity",.7).attr("stroke","#fff").attr("stroke-width",.5);
+
+    dots.on("mouseenter",function(ev,d){
+      dots.transition().duration(150).attr("opacity",.08);
+      d3.select(this).transition().duration(150).attr("r",11).attr("opacity",1).attr("stroke","#333").attr("stroke-width",2);
+      showTip(ev,`<strong>${d.name}, ${d.state}</strong><br>Poor kids: <strong>${d.p1.toFixed(1)}</strong>th pctile<br>Rich kids: <strong>${d.p100.toFixed(1)}</strong>th pctile<br>Gap: <strong style="color:${gapColor(d.p100-d.p1)}">${(d.p100-d.p1).toFixed(1)} pts</strong>`);
+    })
+    .on("mousemove",ev=>{tip.style("left",(ev.pageX+15)+"px").style("top",(ev.pageY-10)+"px")})
+    .on("mouseleave",function(){dots.transition().duration(200).attr("r",5).attr("opacity",.7).attr("stroke","#fff").attr("stroke-width",.5);hideTip()});
+
+    // Annotation
+    g.append("text").attr("x",iW/2).attr("y",28).attr("text-anchor","middle").attr("font-size",14).attr("fill","#555").attr("font-weight",500)
+      .text("Almost all counties above the diagonal \u2014 rich kids do better everywhere");
+
+    // Color legend for gap
+    const lgW=200;
+    const lgG=g.append("g").attr("transform",`translate(${iW-lgW-10},${iH-50})`);
+    const lgDefs=svg.append("defs");
+    const lgGrad=lgDefs.append("linearGradient").attr("id","gapleg");
+    lgGrad.append("stop").attr("offset","0%").attr("stop-color","#2A9D8F");
+    lgGrad.append("stop").attr("offset","50%").attr("stop-color","#E9C46A");
+    lgGrad.append("stop").attr("offset","100%").attr("stop-color","#E63946");
+    lgG.append("rect").attr("width",lgW).attr("height",10).attr("rx",3).attr("fill","url(#gapleg)");
+    lgG.append("text").attr("y",24).attr("font-size",13).attr("fill","#666").text("Small gap (equal)");
+    lgG.append("text").attr("x",lgW).attr("y",24).attr("text-anchor","end").attr("font-size",13).attr("fill","#666").text("Large gap (unequal)");
+  })();
+
+  // ── VIZ 3: DIVERGING BAR ──
+  (function(){
+    const sd=states.filter(d=>d.n>=3).sort((a,b)=>b.ch-a.ch);
+    const W=900,rowH=20,m={top:10,right:60,bottom:30,left:100};
+    const H=m.top+sd.length*rowH+m.bottom;
+    const iW=W-m.left-m.right;
+    const svg=d3.select("#chart-change").append("svg").attr("viewBox",`0 0 ${W} ${H}`).attr("width","100%");
+    const g=svg.append("g").attr("transform",`translate(${m.left},${m.top})`);
+
+    const xMax=Math.max(d3.max(sd,d=>Math.abs(d.ch)),5);
+    const x=d3.scaleLinear().domain([-xMax,xMax]).range([0,iW]);
+    const yB=d3.scaleBand().domain(sd.map(d=>d.state)).range([0,sd.length*rowH]).padding(.25);
+
+    // Center line
+    g.append("line").attr("x1",x(0)).attr("x2",x(0)).attr("y1",0).attr("y2",sd.length*rowH).attr("stroke","#999");
+
+    // Labels
+    g.append("text").attr("x",x(-xMax)).attr("y",sd.length*rowH+20).attr("font-size",13).attr("fill","#555").text("← Worsening");
+    g.append("text").attr("x",x(xMax)).attr("y",sd.length*rowH+20).attr("text-anchor","end").attr("font-size",13).attr("fill","#555").text("Improving →");
+
+    // State names
+    sd.forEach(d=>g.append("text").attr("x",-8).attr("y",yB(d.state)+yB.bandwidth()/2)
+      .attr("text-anchor","end").attr("dominant-baseline","middle").attr("font-size",13).attr("fill","#555").text(d.state));
+
+    // Bars
+    const bars=g.selectAll(".chbar").data(sd).join("rect").attr("class","chbar")
+      .attr("y",d=>yB(d.state)).attr("height",yB.bandwidth()).attr("rx",2)
+      .attr("x",x(0)).attr("width",0)
+      .attr("fill",d=>d.ch>=0?"#457B9D":"#E63946").attr("opacity",.7);
+
+    bars.transition().delay((_,i)=>i*20).duration(600).ease(d3.easeCubicInOut)
+      .attr("x",d=>d.ch>=0?x(0):x(d.ch))
+      .attr("width",d=>Math.abs(x(d.ch)-x(0)));
+
+    // Value labels
+    const vlabels=g.selectAll(".vlbl").data(sd).join("text").attr("class","vlbl")
+      .attr("y",d=>yB(d.state)+yB.bandwidth()/2).attr("dominant-baseline","middle")
+      .attr("font-size",9).attr("fill","#555").attr("opacity",0)
+      .attr("x",d=>d.ch>=0?x(d.ch)+4:x(d.ch)-4)
+      .attr("text-anchor",d=>d.ch>=0?"start":"end")
+      .text(d=>(d.ch>0?"+":"")+d.ch.toFixed(1));
+    vlabels.transition().delay((_,i)=>400+i*20).duration(300).attr("opacity",1);
+
+    // Hover
+    g.selectAll(".chbar-hit").data(sd).join("rect").attr("class","chbar-hit")
+      .attr("x",0).attr("y",d=>yB(d.state)).attr("width",iW).attr("height",yB.bandwidth())
+      .attr("fill","transparent").attr("cursor","pointer")
+      .on("mouseenter",function(ev,d){
+        bars.transition().duration(150).attr("opacity",.15);
+        bars.filter(b=>b.state===d.state).transition().duration(150).attr("opacity",1);
+        showTip(ev,`<strong>${d.state}</strong><br>Change: <strong style="color:${d.ch>=0?"#457B9D":"#E63946"}">${d.ch>0?"+":""}${d.ch.toFixed(1)} pts</strong><br>Counties: ${d.n}<br>Avg poor-kid rank: ${d.p1.toFixed(1)}`);
+      })
+      .on("mousemove",ev=>{tip.style("left",(ev.pageX+15)+"px").style("top",(ev.pageY-10)+"px")})
+      .on("mouseleave",function(){bars.transition().duration(200).attr("opacity",.7);hideTip()});
+  })();
+});
+
+// ═══ PART II: Hardcoded global data ═══
+const dumbbellData=[
+  {country:"Sweden",gini_mkt:48.2,gini_disp:25.4,region:"Nordic"},{country:"Denmark",gini_mkt:47.8,gini_disp:25.3,region:"Nordic"},
+  {country:"Finland",gini_mkt:47.5,gini_disp:25.7,region:"Nordic"},{country:"Norway",gini_mkt:43.9,gini_disp:24.8,region:"Nordic"},
+  {country:"Belgium",gini_mkt:47.2,gini_disp:26.2,region:"Continental"},{country:"Germany",gini_mkt:49.5,gini_disp:30.0,region:"Continental"},
+  {country:"France",gini_mkt:48.8,gini_disp:30.1,region:"Continental"},{country:"Netherlands",gini_mkt:46.5,gini_disp:27.8,region:"Continental"},
+  {country:"Austria",gini_mkt:47.3,gini_disp:28.0,region:"Continental"},
+  {country:"United Kingdom",gini_mkt:48.5,gini_disp:33.5,region:"Anglo"},{country:"Canada",gini_mkt:44.8,gini_disp:31.0,region:"Anglo"},
+  {country:"Australia",gini_mkt:46.8,gini_disp:33.0,region:"Anglo"},{country:"Japan",gini_mkt:47.0,gini_disp:33.0,region:"East Asia"},
+  {country:"South Korea",gini_mkt:40.5,gini_disp:31.4,region:"East Asia"},{country:"United States",gini_mkt:48.0,gini_disp:38.0,region:"Anglo"},
+  {country:"China",gini_mkt:47.0,gini_disp:38.5,region:"East Asia"},{country:"Brazil",gini_mkt:56.0,gini_disp:47.5,region:"Latin America"},
+  {country:"Chile",gini_mkt:50.0,gini_disp:44.5,region:"Latin America"},{country:"Mexico",gini_mkt:49.0,gini_disp:43.8,region:"Latin America"},
+  {country:"South Africa",gini_mkt:68.0,gini_disp:63.0,region:"Africa"},
+].map(d=>({...d,abs_red:+(d.gini_mkt-d.gini_disp).toFixed(1)})).sort((a,b)=>b.abs_red-a.abs_red);
+
+// VIZ 4: DUMBBELL
+(function(){
+  const dd=dumbbellData,W=900,m={top:8,right:50,bottom:40,left:130},rowH=30;
+  const H=m.top+dd.length*rowH+m.bottom,iW=W-m.left-m.right;
+  const svg=d3.select("#chart-dumbbell").append("svg").attr("viewBox",`0 0 ${W} ${H}`).attr("width","100%");
+  const g=svg.append("g").attr("transform",`translate(${m.left},${m.top})`);
+  const x=d3.scaleLinear().domain([18,72]).range([0,iW]);
+  const y=d3.scaleBand().domain(dd.map(d=>d.country)).range([0,dd.length*rowH]).padding(.35);
+
+  const ax=g.append("g").attr("transform",`translate(0,${dd.length*rowH+6})`);
+  ax.append("line").attr("x1",x(20)).attr("x2",x(70)).attr("stroke","#999");
+  [20,30,40,50,60,70].forEach(v=>ax.append("text").attr("x",x(v)).attr("y",16).attr("text-anchor","middle").attr("font-size",13).attr("fill","#555").text(v));
+  ax.append("text").attr("x",x(20)).attr("y",32).attr("font-size",13).attr("fill","#555").text("← More equal");
+  ax.append("text").attr("x",x(70)).attr("y",32).attr("text-anchor","end").attr("font-size",13).attr("fill","#555").text("More unequal →");
+
+  dd.forEach(d=>g.append("text").attr("x",-10).attr("y",y(d.country)+y.bandwidth()/2).attr("text-anchor","end").attr("dominant-baseline","middle").attr("font-size",13).attr("font-weight",600).attr("fill",RC[d.region]).text(d.country));
+
+  const rows=g.selectAll(".dbr").data(dd).join("g").attr("class","dbr");
+  rows.append("line").attr("class","bar").attr("y1",d=>y(d.country)+y.bandwidth()/2).attr("y2",d=>y(d.country)+y.bandwidth()/2)
+    .attr("x1",d=>x(d.gini_mkt)).attr("x2",d=>x(d.gini_mkt)).attr("stroke",d=>RC[d.region]).attr("stroke-width",4).attr("stroke-opacity",.3).attr("stroke-linecap","round");
+  rows.append("circle").attr("cy",d=>y(d.country)+y.bandwidth()/2).attr("cx",d=>x(d.gini_mkt)).attr("r",6).attr("fill","#fff").attr("stroke",d=>RC[d.region]).attr("stroke-width",2.5);
+  rows.append("circle").attr("class","dot-l").attr("cy",d=>y(d.country)+y.bandwidth()/2).attr("cx",d=>x(d.gini_mkt)).attr("r",6).attr("fill",d=>RC[d.region]);
+  rows.append("text").attr("class","glbl").attr("y",d=>y(d.country)+y.bandwidth()/2).attr("x",d=>x(d.gini_mkt)+8).attr("dominant-baseline","middle").attr("font-size",13).attr("fill","#666").text(d=>d.abs_red).attr("opacity",0);
+
+  rows.append("rect").attr("x",0).attr("y",d=>y(d.country)).attr("width",iW).attr("height",y.bandwidth()).attr("fill","transparent").attr("cursor","pointer")
+    .on("mouseenter",function(ev,d){rows.transition().duration(200).attr("opacity",.15);d3.select(this.parentNode).transition().duration(200).attr("opacity",1);showTip(ev,`<strong>${d.country}</strong> (${d.region})<br>Before tax: <strong>${d.gini_mkt}</strong><br>After tax: <strong>${d.gini_disp}</strong><br>Gap: <strong style="color:${RC[d.region]}">${d.abs_red} pts</strong>`);})
+    .on("mousemove",ev=>showTip(ev,tip.html()))
+    .on("mouseleave",function(){rows.transition().duration(300).attr("opacity",1);hideTip()});
+
+  rows.selectAll(".bar").transition().delay((_,i)=>i*30).duration(800).ease(d3.easeCubicInOut).attr("x1",d=>x(d.gini_disp));
+  rows.selectAll(".dot-l").transition().delay((_,i)=>i*30).duration(800).ease(d3.easeCubicInOut).attr("cx",d=>x(d.gini_disp));
+  rows.selectAll(".glbl").transition().delay((_,i)=>600+i*30).duration(400).attr("opacity",.7);
+
+  // Annotations
+  const se=dd.find(d=>d.country==="Sweden"),us=dd.find(d=>d.country==="United States");
+  g.append("line").attr("x1",x(se.gini_disp)-40).attr("y1",y(se.country)-10).attr("x2",x(se.gini_disp)-5).attr("y2",y(se.country)+y.bandwidth()/2-2).attr("stroke",RC.Nordic).attr("stroke-width",1.2);
+  g.append("text").attr("x",x(se.gini_disp)-42).attr("y",y(se.country)-14).attr("text-anchor","end").attr("font-size",13).attr("fill",RC.Nordic).attr("font-weight",600).text("Cuts inequality nearly in half");
+  g.append("line").attr("x1",x(us.gini_disp)+60).attr("y1",y(us.country)+y.bandwidth()+12).attr("x2",x(us.gini_disp)+5).attr("y2",y(us.country)+y.bandwidth()/2+2).attr("stroke",RC.Anglo).attr("stroke-width",1.2);
+  g.append("text").attr("x",x(us.gini_disp)+62).attr("y",y(us.country)+y.bandwidth()+16).attr("font-size",13).attr("fill",RC.Anglo).attr("font-weight",600).text("Barely redistributes");
+
+  let activeR=null;
+  buildLeg("legend4",Object.entries(RC),function(rg){activeR=activeR===rg?null:rg;rows.transition().duration(300).attr("opacity",d=>!activeR||d.region===activeR?1:.1);d3.selectAll("#legend4 .legend-item").style("opacity",function(r){return!activeR||r===activeR?1:.4})});
+})();
+
+// VIZ 5: STACKED BAR
+(function(){
+  const id=[
+    {country:"South Africa",top10:65.3,mid40:27.0,bot50:7.7},{country:"Brazil",top10:58.6,mid40:31.5,bot50:9.9},
+    {country:"India",top10:57.7,mid40:29.8,bot50:12.5},{country:"Mexico",top10:57.2,mid40:31.8,bot50:11.0},
+    {country:"Chile",top10:55.4,mid40:33.0,bot50:11.6},{country:"United States",top10:46.5,mid40:40.3,bot50:13.2},
+    {country:"Japan",top10:44.4,mid40:39.8,bot50:15.8},{country:"China",top10:41.7,mid40:43.1,bot50:15.2},
+    {country:"Germany",top10:36.8,mid40:42.7,bot50:20.5},{country:"France",top10:32.4,mid40:44.6,bot50:23.0},
+    {country:"Sweden",top10:30.3,mid40:46.5,bot50:23.2},{country:"Norway",top10:28.2,mid40:46.3,bot50:25.5},
+  ];
+  const segs=["top10","mid40","bot50"],sC={top10:"#E63946",mid40:"#CCC",bot50:"#457B9D"},sN={top10:"Top 10%",mid40:"Middle 40%",bot50:"Bottom 50%"},sTx={top10:"#fff",mid40:"#555",bot50:"#fff"};
+  const W=900,m={top:4,right:10,bottom:10,left:120},bH=28,gap=8;
+  const H=m.top+id.length*(bH+gap)+m.bottom,iW=W-m.left-m.right;
+  const svg=d3.select("#chart-income").append("svg").attr("viewBox",`0 0 ${W} ${H}`).attr("width","100%");
+  const g=svg.append("g").attr("transform",`translate(${m.left},${m.top})`);
+  const x=d3.scaleLinear().domain([0,101]).range([0,iW]);
+
+  const rows=g.selectAll(".ir").data(id).join("g").attr("class","ir").attr("transform",(_,i)=>`translate(0,${i*(bH+gap)})`);
+  rows.append("text").attr("x",-10).attr("y",bH/2).attr("text-anchor","end").attr("dominant-baseline","middle").attr("font-size",13).attr("font-weight",600).attr("fill","#333").text(d=>d.country);
+
+  segs.forEach((seg,si)=>{
+    const prev=segs.slice(0,si);
+    rows.append("rect").attr("class","seg seg-"+seg).attr("y",0).attr("height",bH).attr("rx",3)
+      .attr("x",d=>x(prev.reduce((s,k)=>s+d[k],0))+(si>0?2:0)).attr("width",0).attr("fill",sC[seg]);
+    rows.append("text").attr("class","slbl slbl-"+seg).attr("y",bH/2).attr("dominant-baseline","middle").attr("text-anchor","middle")
+      .attr("font-size",13).attr("font-weight",600).attr("fill",sTx[seg]).attr("opacity",0)
+      .attr("x",d=>{const start=prev.reduce((s,k)=>s+d[k],0);return x(start+d[seg]/2)+(si>0?2:0)})
+      .text(d=>d[seg]>7?d[seg]+"%":"");
+  });
+
+  segs.forEach((seg,si)=>{
+    rows.selectAll(".seg-"+seg).transition().delay((_,i)=>si*200+i*40).duration(600).ease(d3.easeCubicInOut).attr("width",d=>x(d[seg]));
+    rows.selectAll(".slbl-"+seg).transition().delay((_,i)=>si*200+300+i*40).duration(300).attr("opacity",1);
+  });
+
+  segs.forEach(seg=>{
+    rows.selectAll(".seg-"+seg)
+      .on("mouseenter",function(ev,d){segs.forEach(s=>{g.selectAll(".seg-"+s).transition().duration(200).attr("opacity",s===seg?1:.25);g.selectAll(".slbl-"+s).transition().duration(200).attr("opacity",s===seg?1:.15)});showTip(ev,`<strong>${d.country}</strong><br>${sN[seg]}: <strong style="color:${sC[seg]}">${d[seg]}%</strong>`)})
+      .on("mousemove",ev=>showTip(ev,tip.html()))
+      .on("mouseleave",function(){segs.forEach(s=>{g.selectAll(".seg-"+s).transition().duration(300).attr("opacity",1);g.selectAll(".slbl-"+s).transition().duration(300).attr("opacity",1)});hideTip()});
+  });
+
+  const leg=d3.select("#legend5");
+  [{n:"Top 10%",c:"#E63946"},{n:"Middle 40%",c:"#CCC"},{n:"Bottom 50%",c:"#457B9D"}].forEach(l=>{const it=leg.append("span").attr("class","legend-item");it.append("span").attr("class","legend-dot").style("background",l.c).style("border-radius","2px");it.append("span").text(l.n)});
+})();
+
+// VIZ 6: LIFE SCATTER
+(function(){
+  const ld=[
+    {country:"Norway",top10:28.2,life_exp:83.3,region:"Nordic"},{country:"Sweden",top10:30.3,life_exp:83.1,region:"Nordic"},
+    {country:"Denmark",top10:29.5,life_exp:81.4,region:"Nordic"},{country:"Finland",top10:31.2,life_exp:81.8,region:"Nordic"},
+    {country:"France",top10:32.4,life_exp:82.3,region:"Continental"},{country:"Germany",top10:36.8,life_exp:80.6,region:"Continental"},
+    {country:"United Kingdom",top10:35.1,life_exp:80.7,region:"Anglo"},{country:"South Korea",top10:36.2,life_exp:83.7,region:"East Asia"},
+    {country:"Japan",top10:44.4,life_exp:84.8,region:"East Asia"},{country:"United States",top10:46.5,life_exp:77.5,region:"Anglo"},
+    {country:"China",top10:41.7,life_exp:78.2,region:"East Asia"},{country:"Chile",top10:55.4,life_exp:78.9,region:"Latin America"},
+    {country:"Mexico",top10:57.2,life_exp:75.0,region:"Latin America"},{country:"Brazil",top10:58.6,life_exp:72.8,region:"Latin America"},
+    {country:"India",top10:57.7,life_exp:70.8,region:"Africa"},{country:"South Africa",top10:65.3,life_exp:62.3,region:"Africa"},
+  ];
+  const W=900,H=480,m={top:16,right:30,bottom:50,left:56};
+  const iW=W-m.left-m.right,iH=H-m.top-m.bottom;
+  const svg=d3.select("#chart-life").append("svg").attr("viewBox",`0 0 ${W} ${H}`).attr("width","100%");
+  const g=svg.append("g").attr("transform",`translate(${m.left},${m.top})`);
+  const x=d3.scaleLinear().domain([25,70]).range([0,iW]);
+  const y=d3.scaleLinear().domain([58,88]).range([iH,0]);
+
+  [65,70,75,80,85].forEach(v=>g.append("line").attr("x1",0).attr("x2",iW).attr("y1",y(v)).attr("y2",y(v)).attr("stroke","#eee").attr("opacity",.5));
+  g.append("line").attr("x1",0).attr("x2",iW).attr("y1",iH).attr("y2",iH).attr("stroke","#999");
+  g.append("line").attr("x1",0).attr("x2",0).attr("y1",0).attr("y2",iH).attr("stroke","#999");
+  [30,40,50,60].forEach(v=>g.append("text").attr("x",x(v)).attr("y",iH+16).attr("text-anchor","middle").attr("font-size",13).attr("fill","#555").text(v+"%"));
+  g.append("text").attr("x",iW).attr("y",iH+32).attr("text-anchor","end").attr("font-size",13).attr("fill","#666").text("Top 10% income share →");
+  [60,65,70,75,80,85].forEach(v=>g.append("text").attr("x",-8).attr("y",y(v)).attr("text-anchor","end").attr("dominant-baseline","middle").attr("font-size",13).attr("fill","#555").text(v));
+  g.append("text").attr("x",-8).attr("y",-6).attr("text-anchor","end").attr("font-size",13).attr("fill","#666").text("Life exp ↑");
+
+  // Trend
+  const xs=ld.map(d=>d.top10),ys=ld.map(d=>d.life_exp),n=xs.length,mx=d3.mean(xs),my=d3.mean(ys);
+  const sl=d3.sum(xs.map((xi,i)=>(xi-mx)*(ys[i]-my)))/d3.sum(xs.map(xi=>(xi-mx)**2));
+  const ic=my-sl*mx;
+  const rv=d3.sum(xs.map((xi,i)=>(xi-mx)*(ys[i]-my)))/Math.sqrt(d3.sum(xs.map(xi=>(xi-mx)**2))*d3.sum(ys.map(yi=>(yi-my)**2)));
+  g.append("line").attr("x1",x(26)).attr("y1",y(sl*26+ic)).attr("x2",x(68)).attr("y2",y(sl*68+ic)).attr("stroke","#999").attr("stroke-width",1.5).attr("stroke-dasharray","8,6").attr("opacity",.5);
+  g.append("line").attr("x1",x(26)).attr("y1",y(sl*26+ic)).attr("x2",x(68)).attr("y2",y(sl*68+ic)).attr("stroke","transparent").attr("stroke-width",16).attr("cursor","pointer")
+    .on("mouseenter",ev=>showTip(ev,`<strong>Trend line</strong><br>r = ${rv.toFixed(2)}<br>More concentration → shorter lives`))
+    .on("mousemove",ev=>showTip(ev,tip.html())).on("mouseleave",hideTip);
+
+  const lOff={"Norway":[8,-8],"Sweden":[8,4],"Denmark":[8,8],"Finland":[-8,10],"France":[8,6],"Germany":[8,-6],"United Kingdom":[8,6],"South Korea":[8,-4],"Japan":[8,6],"United States":[10,4],"China":[8,-8],"Chile":[8,-4],"Mexico":[8,8],"Brazil":[8,4],"India":[-60,4],"South Africa":[8,-6]};
+  const labels=g.selectAll(".clbl").data(ld).join("text").attr("class","clbl").attr("x",d=>x(d.top10)+(lOff[d.country]||[8,0])[0]).attr("y",d=>y(d.life_exp)+(lOff[d.country]||[0,0])[1]).attr("font-size",13).attr("font-weight",500).attr("fill",d=>RC[d.region]).attr("dominant-baseline","middle").text(d=>d.country);
+
+  const dots=g.selectAll(".dot").data(ld).join("circle").attr("class","dot").attr("cx",d=>x(d.top10)).attr("cy",d=>y(d.life_exp)).attr("r",0).attr("fill",d=>RC[d.region]).attr("opacity",.85).attr("stroke","#fff").attr("stroke-width",1.5);
+  dots.transition().delay(()=>Math.random()*400).duration(500).ease(d3.easeCubicOut).attr("r",7);
+
+  dots.on("mouseenter",function(ev,d){
+    dots.transition().duration(200).attr("opacity",.15).attr("r",5);
+    d3.select(this).transition().duration(200).attr("opacity",1).attr("r",12);
+    labels.transition().duration(200).attr("fill","#ddd").attr("font-weight",400);
+    labels.filter(l=>l.country===d.country).transition().duration(200).attr("fill",RC[d.region]).attr("font-weight",700);
+    showTip(ev,`<strong>${d.country}</strong> (${d.region})<br>Top 10% share: <strong>${d.top10}%</strong><br>Life expectancy: <strong>${d.life_exp} yrs</strong>`);
+  }).on("mousemove",ev=>showTip(ev,tip.html()))
+  .on("mouseleave",function(){dots.transition().duration(300).attr("opacity",.85).attr("r",7);labels.transition().duration(300).attr("fill",d=>RC[d.region]).attr("font-weight",500);hideTip()});
+
+  // US annotation
+  const us=ld.find(d=>d.country==="United States");
+  g.append("line").attr("x1",x(us.top10)+10).attr("y1",y(us.life_exp)-16).attr("x2",x(us.top10)+50).attr("y2",y(us.life_exp)-50).attr("stroke","#E63946").attr("stroke-width",1.5);
+  g.append("text").attr("x",x(us.top10)+54).attr("y",y(us.life_exp)-54).attr("font-size",13).attr("font-weight",600).attr("fill","#E63946").text("Richest major economy,");
+  g.append("text").attr("x",x(us.top10)+54).attr("y",y(us.life_exp)-40).attr("font-size",13).attr("font-weight",600).attr("fill","#E63946").text("but life expectancy below peers");
+
+  let activeR6=null;
+  buildLeg("legend6",Object.entries(RC),function(rg){
+    activeR6=activeR6===rg?null:rg;
+    dots.transition().duration(300).attr("opacity",d=>!activeR6||d.region===activeR6?.85:.08).attr("r",d=>!activeR6||d.region===activeR6?7:4);
+    labels.transition().duration(300).attr("opacity",d=>!activeR6||d.region===activeR6?1:.1);
+    d3.selectAll("#legend6 .legend-item").style("opacity",function(r){return!activeR6||r===activeR6?1:.4});
+  });
+})();
+</script>
+</body>
+</html>
